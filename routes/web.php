@@ -1,10 +1,4 @@
 <?php
-use App\Http\Controllers\SellerDeliveryController;
-use App\Http\Controllers\SellerSettingController;
-use App\Http\Controllers\SellerDisputeController;
-use App\Http\Controllers\SellerEscrowController;
-use App\Http\Controllers\SellerNotificationController;
-use App\Http\Controllers\SellerPayoutController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\DisputeController;
@@ -29,7 +23,10 @@ Route::middleware(['auth', 'verified', 'RoleManager:buyer'])->group(function () 
 
         // Escrows
         Route::get('/escrows', [EscrowController::class, 'buyerindex'])->name('buyer.escrows.view');
+        Route::get('/escrows/create', [EscrowController::class, 'buyercreate'])->name('buyer.escrows.create'); // move this above
         Route::get('/escrows/{id}', [EscrowController::class, 'buyershow'])->name('buyer.escrows.show');
+        Route::post('/buyer/escrows/store', [EscrowController::class, 'store'])->name('buyer.escrows.store');
+        Route::post('/buyer/escrows/{id}/confirm-delivery', [EscrowController::class, 'confirmDelivery'])->name('buyer.escrows.confirmDelivery');
     
         // Orders/Deliveries
         Route::get('/orders', [DeliveryController::class, 'buyerindex'])->name('buyer.orders.orders');
@@ -37,7 +34,6 @@ Route::middleware(['auth', 'verified', 'RoleManager:buyer'])->group(function () 
     
         // Disputes
         Route::get('/disputes', [DisputeController::class, 'buyerindex'])->name('buyer.disputes.view');
-        Route::post('/disputes/create', [DisputeController::class, 'buyershow'])->name('buyer.disputes.show');
     
         // Payouts (optional for buyer if applicable)
        // Route::get('/payouts/history', [PayoutController::class, 'buyerindex'])->name('buyer.payouts.view');
@@ -66,7 +62,8 @@ Route::middleware(['auth', 'verified', 'RoleManager:admin'])->prefix('admin')->g
     // Disputes
     Route::get('/disputes/view', [DisputeController::class, 'index'])->name('admin.disputes.viewdisputes');
     Route::get('/disputes/solve', [DisputeController::class, 'resolve'])->name('admin.disputes.solvedisputes');
-
+    // Escrow
+    Route::get('/admin/escrow/auto-release', [EscrowController::class, 'autoRelease'])->middleware(['auth', 'verified', 'RoleManager:admin']);
     // Notifications
     Route::get('/notification/view', [NotificationController::class, 'index'])->name('admin.notifications.viewnotifications');
 
@@ -96,27 +93,28 @@ Route::middleware(['auth', 'verified', 'RoleManager:seller'])->group(function ()
         Route::get('/dashboard', [SellerController::class, 'index'])->name('seller');
 
         // Escrow
-        Route::get('/escrows', [SellerEscrowController::class, 'index'])->name('seller.escrows.view');
-        Route::get('/escrows/{id}', [SellerEscrowController::class, 'show'])->name('seller.escrows.show');
+       Route::get('/escrows', [EscrowController::class, 'sellerindex'])->name('seller.escrows.view');
+       Route::get('/escrows/{id}', [EscrowController::class, 'sellershow'])->name('seller.escrows.show');
+       Route::post('/escrows/mark-delivered/{id}', [EscrowController::class, 'markDelivered'])->name('seller.escrows.markDelivered');
 
         // Orders/Deliveries
-        Route::get('/orders', [SellerDeliveryController::class, 'index'])->name('seller.orders.orders');
-        Route::post('/orders/update/{id}', [SellerDeliveryController::class, 'updateStatus'])->name('seller.orders.update');
+        Route::get('/orders', [DeliveryController::class, 'sellerindex'])->name('seller.orders.orders');
+        Route::post('/orders/update/{id}', [DeliveryController::class, 'updateStatus'])->name('seller.orders.update');
 
         // Disputes
-        Route::get('/disputes', [SellerDisputeController::class, 'index'])->name('seller.disputes.view');
-        Route::post('/disputes/create', [SellerDisputeController::class, 'create'])->name('seller.disputes.create');
+        Route::get('/disputes', [DisputeController::class, 'sellerindex'])->name('seller.disputes.view');
+        Route::post('/disputes/create', [DisputeController::class, 'sellercreate'])->name('seller.disputes.create');
 
         // Payouts
-        Route::get('/payouts/history', [SellerPayoutController::class, 'index'])->name('seller.payouts.view');
-        Route::post('/payouts/request', [SellerPayoutController::class, 'requestPayout'])->name('seller.payouts.request');
+        Route::get('/payouts/history', [PayoutController::class, 'sellerindex'])->name('seller.payouts.view');
+        Route::post('/payouts/request', [PayoutController::class, 'requestPayout'])->name('seller.payouts.request');
 
         // Notifications
-        Route::get('/notifications', [SellerNotificationController::class, 'index'])->name('seller.notifications.view');
+        Route::get('/notifications', [NotificationController::class, 'sellerindex'])->name('seller.notifications.view');
 
         // Settings
-        Route::get('/settings', [SellerSettingController::class, 'index'])->name('seller.settings.view');
-        Route::post('/settings/update', [SellerSettingController::class, 'update'])->name('seller.settings.update');
+        Route::get('/settings', [SettingsController::class, 'sellerindex'])->name('seller.settings.view');
+        Route::post('/settings/update', [SettingsController::class, 'sellerupdate'])->name('seller.settings.update');
     });
 });
 

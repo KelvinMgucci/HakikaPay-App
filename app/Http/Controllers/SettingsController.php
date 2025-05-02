@@ -18,4 +18,13 @@ class SettingsController extends Controller
         return view('buyer.settings.view');
     }
 
+
+    // Sellers Functions
+    public function sellerindex(){
+        return view('seller.settings.view');
+    }
+    public function sellerupdate(){
+        return view('seller.settings.update');
+    }
+
 }

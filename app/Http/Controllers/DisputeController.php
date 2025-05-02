@@ -24,4 +24,14 @@ public function buyershow(){
     return view('buyer.disputes.show');
 }
 
+
+//Sellers Functions
+public function sellerindex(){
+    return view('seller.disputes.view');
+}
+
+public function sellercreate(){
+    return view('seller.disputes.create');
+}
+
 }

@@ -12,4 +12,13 @@ class PayoutController extends Controller
     public function history() {
         return view('admin.payouts.viewpayouts'); // View payouts page
     }
+
+    //seller functions
+    public function sellerindex(){
+        return view('seller.payouts.view');
+    }
+
+    public function sellerupdate(){
+        return view('seller.payouts.update');
+}
 }

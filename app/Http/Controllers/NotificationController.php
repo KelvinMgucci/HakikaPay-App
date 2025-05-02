@@ -17,5 +17,10 @@ class NotificationController extends Controller
         return view('buyer.notifications.view');
     }
 
+    //Sellers Functions
+    public function sellerindex(){
+        return view('seller.notification.view');
+    }
+
 
 }

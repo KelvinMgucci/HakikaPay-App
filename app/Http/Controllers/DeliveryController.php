@@ -37,6 +37,7 @@ class DeliveryController extends Controller
 
         return back()->with('success', 'Delivery status updated.');
     }
+    // Buyer Functions
 
     public function buyerindex(){
         return view('buyer.orders.view');
@@ -46,5 +47,14 @@ class DeliveryController extends Controller
         return view('buyer.orders.show');
     }
 
+// Seller Functions
+
+    public function sellerindex(){
+        return view('seller.orders.view');
+    }
+
+    public function sellershow(){
+        return view('seller.orders.show');
+    }
 
 }
